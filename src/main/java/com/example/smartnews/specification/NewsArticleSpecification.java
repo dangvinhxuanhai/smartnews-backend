@@ -1,6 +1,7 @@
 package com.example.smartnews.specification;
 
 import com.example.smartnews.entity.NewsArticle;
+import com.example.smartnews.enums.ArticleStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -8,13 +9,13 @@ import java.time.LocalDateTime;
 public class NewsArticleSpecification {
     public static Specification<NewsArticle> hasKeyword(String keyword){
         return ((root, query, cb) -> {
-            if(keyword != null || keyword.isBlank()){
+            if(keyword == null || keyword.isBlank()){
                 return null;
             }
             return cb.like(cb.lower(root.get("title")),"%"+keyword.toLowerCase()+"%");
         });
     }
-    public static Specification<NewsArticle> hashCategory(Integer categoryId){
+    public static Specification<NewsArticle> hasCategory(Integer categoryId){
         return ((root, query, cb) -> {
             if(categoryId == null){
                 return null;
@@ -22,21 +23,21 @@ public class NewsArticleSpecification {
             return cb.equal(root.get("category").get("categoryId"), categoryId);
         });
     }
-    public static Specification<NewsArticle> hashAuthor(Integer authorId){
+    public static Specification<NewsArticle> hasAuthor(Integer authorId){
         return ((root, query, cb) -> {
             if(authorId == null){
                 return null;
             }
-            return cb.equal(root.get("author").get("authorId"), authorId);
+            return cb.equal(root.get("author").get("accountId"), authorId);
         });
     }
 
-    public static Specification<NewsArticle> hashStatus(String status){
+    public static Specification<NewsArticle> hasStatus(ArticleStatus status){
         return ((root, query, cb) -> {
-            if(status == null || status.isBlank()){
+            if(status == null){
                 return null;
             }
-            return cb.like(root.get("status"), status);
+            return cb.equal(root.get("status"), status);
         });
     }
     public static Specification<NewsArticle> hasTag(Integer tagId) {
@@ -45,6 +46,7 @@ public class NewsArticleSpecification {
             if (tagId == null) {
                 return null;
             }
+            query.distinct(true);
             return cb.equal(root.join("tags").get("tagId"), tagId);
         };
     }

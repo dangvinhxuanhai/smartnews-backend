@@ -15,5 +15,5 @@ public interface ArticleService {
     );
     void delete(Integer articleId);
     ArticleResponse getById(Integer articleId);
-    Page<ArticleResponse> search(ArticleSearchRequest request, int page, int size);
+    Page<ArticleResponse> search(ArticleSearchRequest request);
 }

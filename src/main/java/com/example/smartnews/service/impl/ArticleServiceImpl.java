@@ -8,7 +8,7 @@ import com.example.smartnews.entity.Category;
 import com.example.smartnews.entity.NewsArticle;
 import com.example.smartnews.entity.SystemAccount;
 import com.example.smartnews.entity.Tag;
-import com.example.smartnews.enums.ArticalStatus;
+import com.example.smartnews.enums.ArticleStatus;
 import com.example.smartnews.exception.ForbiddenException;
 import com.example.smartnews.exception.ResourceNotFoundException;
 import com.example.smartnews.repository.CategoryRepository;
@@ -56,7 +56,7 @@ public class ArticleServiceImpl implements ArticleService {
         Category category = categoryRepo.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         List<Tag> tags = new ArrayList<>();
-        if(request.getTagIds() != null && request.getTagIds().isEmpty()) {
+        if(request.getTagIds() != null && !request.getTagIds().isEmpty()) {
             tags = tagRepo.findAllById(request.getTagIds());
             if(tags.size() != request.getTagIds().size()){
                 throw new ResourceNotFoundException("One or more tags do not exist");
@@ -69,7 +69,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setContent(request.getContent());
 
-        article.setStatus(ArticalStatus.Draft);
+        article.setStatus(ArticleStatus.Draft);
 
         article.setImageUrl(request.getImageUrl());
 
@@ -83,7 +83,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setViewCount(0);
 
-        return mapToResponse(article);
+        NewsArticle savedArticle = articleRepo.save(article);
+
+        return mapToResponse(savedArticle);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Pageable pageable = PageRequest.of(page,size,Sort.by("createdDate").descending());
 
-        Page<NewsArticle> articles = articleRepo.findByStatus(ArticalStatus.Published,pageable);
+        Page<NewsArticle> articles = articleRepo.findByStatus(ArticleStatus.Published,pageable);
 
         return articles.map(this::mapToResponse);
     }
@@ -195,16 +197,17 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleResponse> search(ArticleSearchRequest request, int page, int size) {
+    public Page<ArticleResponse> search(ArticleSearchRequest request) {
         Specification<NewsArticle> spe = Specification
                 .where(hasKeyword(request.getKeyword()))
-                .and(hashCategory(request.getCategoryId()))
-                .and(hashAuthor(request.getAuthorId()))
-                .and(hashStatus(request.getStatus()))
+                .and(hasCategory(request.getCategoryId()))
+                .and(hasAuthor(request.getAuthorId()))
+                .and(hasStatus(request.getStatus()))
+                .and(hasTag(request.getTagId()))
                 .and(createdAfter(request.getFromDate()))
                 .and(createdBefore(request.getToDate()));
         Sort sort = buildSort(request.getSortBy());
-        Pageable pageable = PageRequest.of(page,size,Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(request.getPage(),request.getSize(),sort);
         Page<NewsArticle> result = articleRepo.findAll(spe,pageable);
         return result.map(this::mapToResponse);
     }
@@ -216,7 +219,7 @@ public class ArticleServiceImpl implements ArticleService {
         return switch (sortBy){
             case "oldest" -> Sort.by("createdDate").ascending();
             case "mostViewed" -> Sort.by("viewCount").descending();
-            case "recentlyUpdate" -> Sort.by("UpdatedDate").descending();
+            case "recentlyUpdate" -> Sort.by("updatedDate").descending();
             default -> Sort.by("createdDate").descending();
         };
     }

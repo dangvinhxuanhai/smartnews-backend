@@ -1,6 +1,6 @@
 package com.example.smartnews.dto.response;
 
-import com.example.smartnews.enums.ArticalStatus;
+import com.example.smartnews.enums.ArticleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ public class ArticleResponse {
     private Integer articleId;
     private String title;
     private String content;
-    private ArticalStatus status;
+    private ArticleStatus status;
     private String imageUrl;
     private Integer viewCount;
     private String authorName;

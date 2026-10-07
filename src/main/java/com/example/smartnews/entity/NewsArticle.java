@@ -1,6 +1,6 @@
 package com.example.smartnews.entity;
 
-import com.example.smartnews.enums.ArticalStatus;
+import com.example.smartnews.enums.ArticleStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,7 +29,7 @@ public class NewsArticle {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status")
-    private ArticalStatus status;
+    private ArticleStatus status;
 
     @Column(name = "ViewCount")
     private Integer viewCount;

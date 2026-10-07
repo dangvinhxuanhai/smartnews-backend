@@ -24,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryResponse create(CreateCategoryRequest request) {
         Category parent = null;
-        if(request.getParentId() == null){
+        if(request.getParentId() != null){
             parent = categoryRepo.findById(request.getParentId())
                     .orElseThrow(() -> new ResourceNotFoundException("parent category not found"));
         }

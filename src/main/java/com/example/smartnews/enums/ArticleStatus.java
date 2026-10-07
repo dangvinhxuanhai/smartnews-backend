@@ -1,6 +1,6 @@
 package com.example.smartnews.enums;
 
-public enum ArticalStatus {
+public enum ArticleStatus {
     Draft,
     Pending,
     Published,

@@ -1,7 +1,7 @@
 package com.example.smartnews.repository;
 
 import com.example.smartnews.entity.NewsArticle;
-import com.example.smartnews.enums.ArticalStatus;
+import com.example.smartnews.enums.ArticleStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 public interface NewsArticleRepository
         extends JpaRepository<NewsArticle,Integer>,
         JpaSpecificationExecutor<NewsArticle> {
-    Page<NewsArticle> findByStatus(ArticalStatus status, Pageable pageable);
+    Page<NewsArticle> findByStatus(ArticleStatus status, Pageable pageable);
     @Modifying
     @Query("""
         UPDATE NewsArticle a

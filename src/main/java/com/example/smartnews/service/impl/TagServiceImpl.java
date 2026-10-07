@@ -23,7 +23,7 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public TagResponse create(CreateTagRequest request) {
-        Tag tag = null;
+        Tag tag = new Tag();
         tag.setTagName(request.getTagName());
         Tag saved = tagRepository.save(tag);
         return mapToResponse(saved);

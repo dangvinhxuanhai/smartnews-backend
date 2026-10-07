@@ -1,6 +1,6 @@
 package com.example.smartnews.dto.request;
 
-import com.example.smartnews.enums.ArticalStatus;
+import com.example.smartnews.enums.ArticleStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
