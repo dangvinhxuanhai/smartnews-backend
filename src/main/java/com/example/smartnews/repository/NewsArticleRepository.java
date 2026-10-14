@@ -10,11 +10,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 
 public interface NewsArticleRepository
         extends JpaRepository<NewsArticle,Integer>,
         JpaSpecificationExecutor<NewsArticle> {
     Page<NewsArticle> findByStatus(ArticleStatus status, Pageable pageable);
+    Optional<NewsArticle> findByArticleIdAndStatus(Integer articleId, ArticleStatus status);
     @Modifying
     @Query("""
         UPDATE NewsArticle a

@@ -2,12 +2,15 @@ package com.example.smartnews.dto.response;
 
 import com.example.smartnews.enums.ArticleStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+
+@Getter
+@Builder
 @AllArgsConstructor
 public class ArticleResponse {
     private Integer articleId;

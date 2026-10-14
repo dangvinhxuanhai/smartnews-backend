@@ -2,6 +2,7 @@ package com.example.smartnews.dto.response;
 
 import lombok.Data;
 
+
 @Data
 public class CategoryResponse {
 

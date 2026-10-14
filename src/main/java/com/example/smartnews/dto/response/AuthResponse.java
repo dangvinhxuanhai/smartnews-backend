@@ -1,9 +1,12 @@
 package com.example.smartnews.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+
+@Getter
+@Builder
 @AllArgsConstructor
 public class AuthResponse {
 

@@ -66,21 +66,13 @@ public class ArticleServiceImpl implements ArticleService {
         NewsArticle article = new NewsArticle();
 
         article.setTitle(request.getTitle());
-
         article.setContent(request.getContent());
-
         article.setStatus(ArticleStatus.Draft);
-
         article.setImageUrl(request.getImageUrl());
-
         article.setCategory(category);
-
         article.setAuthor(author);
-
         article.setTags(tags);
-
         article.setCreatedDate(LocalDateTime.now());
-
         article.setViewCount(0);
 
         NewsArticle savedArticle = articleRepo.save(article);
@@ -97,6 +89,37 @@ public class ArticleServiceImpl implements ArticleService {
         Page<NewsArticle> articles = articleRepo.findByStatus(ArticleStatus.Published,pageable);
 
         return articles.map(this::mapToResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ArticleResponse> getPublishedArticles(ArticleSearchRequest request)
+    {
+
+        Specification<NewsArticle> spe = Specification
+                .where(hasKeyword(request.getKeyword()))
+                .and(hasCategory(request.getCategoryId()))
+                .and(hasAuthor(request.getAuthorId()))
+                .and(hasStatus(ArticleStatus.Published))
+                .and(hasTag(request.getTagId()))
+                .and(createdAfter(request.getFromDate()))
+                .and(createdBefore(request.getToDate()));
+
+        Sort sort = buildSort(request.getSortBy());
+        Pageable pageable = PageRequest.of(request.getPage(),request.getSize(),sort);
+        Page<NewsArticle> result = articleRepo.findAll(spe,pageable);
+
+        return result.map(this::mapToResponse);
+    }
+    @Override
+    @Transactional
+    public ArticleResponse getPublishedArticlesById(Integer articleId) {
+        NewsArticle article = articleRepo.findByArticleIdAndStatus(articleId,ArticleStatus.Published)
+                .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+
+        int updated = articleRepo.increaseView(articleId);
+
+        return mapToResponse(article);
     }
 
     private ArticleResponse mapToResponse(
@@ -139,7 +162,6 @@ public class ArticleServiceImpl implements ArticleService {
         NewsArticle article = articleRepo.findById(articleId)
                         .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
 
-        // OWNERSHIP CHECK
         boolean isAdmin = currentUser.getRole().equals("Admin");
 
         boolean isOwner = article.getAuthor()
@@ -156,20 +178,16 @@ public class ArticleServiceImpl implements ArticleService {
         List<Tag> tags = tagRepo.findAllById( request.getTagIds() );
 
         article.setTitle(request.getTitle());
-
         article.setContent(request.getContent());
-
         article.setImageUrl(request.getImageUrl());
-
         article.setCategory(category);
-
         article.setTags(tags);
-
         article.setUpdatedDate(LocalDateTime.now());
 
         return mapToResponse(article);
     }
     @Override
+    @Transactional
     public void delete(Integer articleId) {
 
         Authentication auth = SecurityContextHolder
@@ -197,6 +215,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ArticleResponse> search(ArticleSearchRequest request) {
         Specification<NewsArticle> spe = Specification
                 .where(hasKeyword(request.getKeyword()))
@@ -206,9 +225,11 @@ public class ArticleServiceImpl implements ArticleService {
                 .and(hasTag(request.getTagId()))
                 .and(createdAfter(request.getFromDate()))
                 .and(createdBefore(request.getToDate()));
+
         Sort sort = buildSort(request.getSortBy());
         Pageable pageable = PageRequest.of(request.getPage(),request.getSize(),sort);
         Page<NewsArticle> result = articleRepo.findAll(spe,pageable);
+
         return result.map(this::mapToResponse);
     }
 
@@ -225,15 +246,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ArticleResponse getById(Integer articleId) {
-
-        int updated = articleRepo.increaseView(articleId);
-
-        if (updated == 0) {
-            throw new ResourceNotFoundException("Article not found");
-        }
-
         NewsArticle article = articleRepo.findById(articleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
 

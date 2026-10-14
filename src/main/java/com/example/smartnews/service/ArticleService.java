@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 public interface ArticleService {
     ArticleResponse create(CreateArticleRequest request);
     Page<ArticleResponse> getPublishedArticles(int page, int size);
+    Page<ArticleResponse> getPublishedArticles(ArticleSearchRequest request);
+    ArticleResponse getPublishedArticlesById(Integer articleId);
     ArticleResponse update(
             Integer articleId,
             UpdateArticleRequest request
