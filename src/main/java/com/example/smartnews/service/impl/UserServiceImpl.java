@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,14 +67,21 @@ public class UserServiceImpl implements UserService {
             Integer id,
             boolean status
     ) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        SystemAccount account =
-                accountRepo.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        SystemAccount currentUser = accountRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(""));
 
-        account.setStatus(status);
+        SystemAccount targetUser = accountRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return mapToResponse(account);
+        if(currentUser.getAccountId() == targetUser.getAccountId() && !status){
+            throw new IllegalArgumentException("You cannot disable your own account");
+        }
+
+        targetUser.setStatus(status);
+
+        return mapToResponse(targetUser);
     }
 
     private UserResponse mapToResponse(
