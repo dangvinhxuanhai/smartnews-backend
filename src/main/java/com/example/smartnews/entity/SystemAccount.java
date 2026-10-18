@@ -1,5 +1,6 @@
 package com.example.smartnews.entity;
 
+import com.example.smartnews.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,8 +22,9 @@ public class SystemAccount {
     @Column(name = "Name")
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "Role")
-    private String role;
+    private UserRole role;
 
     @Column(name = "Status")
     private Boolean status;

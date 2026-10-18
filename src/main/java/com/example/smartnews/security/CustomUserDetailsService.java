@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 ()->new UsernameNotFoundException("User not found"));
         return new User(acc.getEmail(), acc.getPassword(),
                 List.of(
-                        new SimpleGrantedAuthority("ROLE_"+acc.getRole())
+                        new SimpleGrantedAuthority("ROLE_"+acc.getRole().name())
                 ));
     }
 }

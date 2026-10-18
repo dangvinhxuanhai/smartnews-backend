@@ -9,6 +9,7 @@ import com.example.smartnews.entity.NewsArticle;
 import com.example.smartnews.entity.SystemAccount;
 import com.example.smartnews.entity.Tag;
 import com.example.smartnews.enums.ArticleStatus;
+import com.example.smartnews.enums.UserRole;
 import com.example.smartnews.exception.ForbiddenException;
 import com.example.smartnews.exception.ResourceNotFoundException;
 import com.example.smartnews.repository.CategoryRepository;
@@ -162,7 +163,7 @@ public class ArticleServiceImpl implements ArticleService {
         NewsArticle article = articleRepo.findById(articleId)
                         .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
 
-        boolean isAdmin = currentUser.getRole().equals("Admin");
+        boolean isAdmin = currentUser.getRole() == UserRole.Admin;
 
         boolean isOwner = article.getAuthor()
                         .getAccountId()
@@ -201,7 +202,7 @@ public class ArticleServiceImpl implements ArticleService {
         NewsArticle article = articleRepo.findById(articleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
 
-        boolean isAdmin = currentUser.getRole().equals("Admin");
+        boolean isAdmin = currentUser.getRole() == UserRole.Admin;
 
         boolean isOwner = article.getAuthor()
                         .getAccountId()

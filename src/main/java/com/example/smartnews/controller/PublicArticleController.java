@@ -3,6 +3,7 @@ package com.example.smartnews.controller;
 import com.example.smartnews.dto.request.ArticleSearchRequest;
 import com.example.smartnews.dto.response.ArticleResponse;
 import com.example.smartnews.service.ArticleService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class PublicArticleController {
     }
     @GetMapping
     public ResponseEntity<Page<ArticleResponse>> getArticles(
-            @ModelAttribute ArticleSearchRequest request
+            @Valid @ModelAttribute ArticleSearchRequest request
     ) {
         return ResponseEntity.ok(
                 articleService.getPublishedArticles(request)

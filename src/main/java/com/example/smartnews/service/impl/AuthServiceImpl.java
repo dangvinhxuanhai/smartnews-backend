@@ -4,6 +4,7 @@ import com.example.smartnews.dto.request.LoginRequest;
 import com.example.smartnews.dto.request.RegisterRequest;
 import com.example.smartnews.dto.response.UserProfileResponse;
 import com.example.smartnews.entity.SystemAccount;
+import com.example.smartnews.enums.UserRole;
 import com.example.smartnews.exception.ForbiddenException;
 import com.example.smartnews.repository.SystemAccountRepository;
 import com.example.smartnews.security.JwtUtil;
@@ -37,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
         account.setEmail(request.getEmail());
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         account.setName(request.getName());
-        account.setRole("Staff");
+        account.setRole((UserRole.Staff));
         account.setStatus(true);
         account.setIsVerified(false);
         account.setProvider("LOCAL");

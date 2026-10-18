@@ -1,6 +1,7 @@
 package com.example.smartnews.specification;
 
 import com.example.smartnews.entity.SystemAccount;
+import com.example.smartnews.enums.UserRole;
 import org.springframework.data.jpa.domain.Specification;
 
 public class UserSpecification {
@@ -17,11 +18,11 @@ public class UserSpecification {
         };
     }
     public static Specification<SystemAccount> hasRole(
-            String role
+            UserRole role
     ) {
         return (root, query, cb) -> {
 
-            if (role == null || role.isBlank()) {
+            if (role == null) {
                 return null;
             }
             return cb.equal(root.get("role"), role);

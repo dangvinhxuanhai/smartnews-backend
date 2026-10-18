@@ -20,7 +20,7 @@ public class AdminUserController {
 
     @GetMapping
     public ResponseEntity<Page<UserResponse>> search(
-            @ModelAttribute UserSearchRequest request
+            @Valid @ModelAttribute UserSearchRequest request
     ) {
         return ResponseEntity.ok(userService.search(request));
     }

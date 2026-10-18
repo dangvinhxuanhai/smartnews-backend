@@ -5,6 +5,7 @@ import com.example.smartnews.dto.request.CreateArticleRequest;
 import com.example.smartnews.dto.request.UpdateArticleRequest;
 import com.example.smartnews.dto.response.ArticleResponse;
 import com.example.smartnews.service.ArticleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class ArticleController {
 
     @PostMapping
     public ArticleResponse create(
-            @RequestBody CreateArticleRequest request
+            @Valid @RequestBody CreateArticleRequest request
     ) {
         System.out.println("CREATE ARTICLE RUNNING");
         return articleService.create(request);
@@ -39,7 +40,7 @@ public class ArticleController {
     @PutMapping("/{id}")
     public ArticleResponse update(
             @PathVariable Integer id,
-            @RequestBody UpdateArticleRequest request
+            @Valid @RequestBody UpdateArticleRequest request
     ) {
         return articleService.update(id, request);
     }
@@ -51,7 +52,7 @@ public class ArticleController {
         return "Deleted successfully";
     }
     @GetMapping("/search")
-    public Page<ArticleResponse> search(ArticleSearchRequest request){
+    public Page<ArticleResponse> search(@Valid @ModelAttribute ArticleSearchRequest request){
         return articleService.search(request);
     }
 

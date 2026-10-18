@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class UpdateUserStatusRequest {
 
-    @NotNull
+    @NotNull(message = "Status is required")
     private Boolean status;
 }
