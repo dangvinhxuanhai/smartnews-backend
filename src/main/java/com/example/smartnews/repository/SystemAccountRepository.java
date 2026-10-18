@@ -10,4 +10,5 @@ public interface SystemAccountRepository extends JpaRepository<SystemAccount,Int
         JpaSpecificationExecutor<SystemAccount> {
     Optional<SystemAccount> findByEmail(String email);
     Optional<SystemAccount> findByVerificationToken(String token);
+    long countByStatus(Boolean status);
 }

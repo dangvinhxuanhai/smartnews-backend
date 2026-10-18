@@ -25,4 +25,10 @@ public interface NewsArticleRepository
         WHERE a.articleId = :id
     """)
     int increaseView(@Param("id") Integer id);
+    long countByStatus(ArticleStatus status);
+    @Query("""
+        SELECT COALESCE(SUM(a.viewCount), 0)
+        FROM NewsArticle a
+    """)
+    Long sumTotalViews();
 }
