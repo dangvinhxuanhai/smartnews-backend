@@ -11,4 +11,10 @@ public interface ExternalSourceRepository
     Optional<ExternalSource> findByCode(String code);
 
     boolean existsByCode(String code);
+    boolean existsByName(String name);
+
+    boolean existsByNameAndSourceIdNot(
+            String name,
+            Integer sourceId
+    );
 }
