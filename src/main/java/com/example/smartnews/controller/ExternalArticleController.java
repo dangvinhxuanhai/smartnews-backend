@@ -1,6 +1,7 @@
 package com.example.smartnews.controller;
 
 import com.example.smartnews.dto.request.ExternalArticleSearchRequest;
+import com.example.smartnews.dto.request.ImportExternalArticleRequest;
 import com.example.smartnews.dto.response.ExternalArticleDetailResponse;
 import com.example.smartnews.dto.response.ExternalArticleResponse;
 import com.example.smartnews.service.ExternalArticleService;
@@ -29,5 +30,15 @@ public class ExternalArticleController {
             @PathVariable Integer id
     ) {
         return ResponseEntity.ok(articleService.getById(id));
+    }
+    @PostMapping("/import")
+    public ResponseEntity<ExternalArticleDetailResponse> importArticle(
+            @Valid @RequestBody
+            ImportExternalArticleRequest request
+    ) {
+
+        return ResponseEntity.ok(
+                articleService.importFromUrl(request)
+        );
     }
 }

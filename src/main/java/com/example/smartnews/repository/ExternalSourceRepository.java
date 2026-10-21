@@ -3,6 +3,7 @@ package com.example.smartnews.repository;
 import com.example.smartnews.entity.ExternalSource;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ExternalSourceRepository
@@ -17,4 +18,6 @@ public interface ExternalSourceRepository
             String name,
             Integer sourceId
     );
+
+    List<ExternalSource> findByIsActiveTrue();
 }
