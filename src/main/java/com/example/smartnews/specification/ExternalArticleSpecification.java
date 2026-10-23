@@ -1,6 +1,7 @@
 package com.example.smartnews.specification;
 
 import com.example.smartnews.entity.ExternalArticle;
+import com.example.smartnews.enums.ExternalArticleReviewStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -60,6 +61,16 @@ public class ExternalArticleSpecification {
                             .trim()
                             .toLowerCase()
             );
+        };
+    }
+
+    public static Specification<ExternalArticle> hasReviewStatus(ExternalArticleReviewStatus status) {
+
+        return (root, query, cb) -> {
+            if (status == null) {
+                return null;
+            }
+            return cb.equal(root.get("reviewStatus"), status);
         };
     }
 

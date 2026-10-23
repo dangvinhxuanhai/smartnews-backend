@@ -159,3 +159,30 @@ CREATE INDEX IX_ExternalArticle_PublishedAt ON ExternalArticle(PublishedAt DESC)
 CREATE INDEX IX_Story_Status ON Story(Status);
 CREATE INDEX IX_Story_CategoryId ON Story(CategoryId);
 CREATE INDEX IX_Story_CreatedDate ON Story(CreatedDate DESC);
+
+ALTER TABLE ExternalArticle
+ADD
+    ReviewStatus NVARCHAR(20) NOT NULL
+        CONSTRAINT DF_ExternalArticle_ReviewStatus
+        DEFAULT 'Pending',
+    ReviewedBy INT NULL,
+    ReviewedAt DATETIME2 NULL,
+    EditorNote NVARCHAR(1000) NULL;
+GO
+
+ALTER TABLE ExternalArticle
+ADD CONSTRAINT CK_ExternalArticle_ReviewStatus
+CHECK (ReviewStatus IN (
+    'Pending',
+    'Reviewed',
+    'Ignored'
+));
+GO
+
+ALTER TABLE ExternalArticle
+ADD CONSTRAINT FK_ExternalArticle_ReviewedBy
+FOREIGN KEY (ReviewedBy)
+REFERENCES SystemAccount(AccountId);
+
+CREATE INDEX IX_ExternalArticle_ReviewStatus
+ON ExternalArticle(ReviewStatus);

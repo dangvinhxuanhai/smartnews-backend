@@ -1,5 +1,6 @@
 package com.example.smartnews.dto.response;
 
+import com.example.smartnews.enums.ExternalArticleReviewStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -32,4 +33,6 @@ public class ExternalArticleResponse {
     private String sourceCode;
 
     private String sourceName;
+
+    private ExternalArticleReviewStatus reviewStatus;
 }

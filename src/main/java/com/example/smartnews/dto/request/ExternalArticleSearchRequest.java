@@ -1,5 +1,6 @@
 package com.example.smartnews.dto.request;
 
+import com.example.smartnews.enums.ExternalArticleReviewStatus;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
@@ -19,6 +20,8 @@ public class ExternalArticleSearchRequest {
     private Integer categoryId;
 
     private String originalCategory;
+
+    private ExternalArticleReviewStatus reviewStatus;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime fromDate;

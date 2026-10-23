@@ -1,5 +1,6 @@
 package com.example.smartnews.entity;
 
+import com.example.smartnews.enums.ExternalArticleReviewStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -85,11 +86,35 @@ public class ExternalArticle {
     )
     private LocalDateTime importedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "ReviewStatus",
+            nullable = false,
+            length = 20
+    )
+    private ExternalArticleReviewStatus reviewStatus;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ReviewedBy")
+    private SystemAccount reviewedBy;
+
+
+    @Column(name = "ReviewedAt")
+    private LocalDateTime reviewedAt;
+
+
+    @Column(name = "EditorNote", length = 1000)
+    private String editorNote;
+
     @PrePersist
     public void prePersist() {
 
         if (importedAt == null) {
             importedAt = LocalDateTime.now();
+        }
+        if (reviewStatus == null) {
+            reviewStatus = ExternalArticleReviewStatus.Pending;
         }
     }
 }

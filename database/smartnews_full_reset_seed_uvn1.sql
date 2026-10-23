@@ -89102,7 +89102,10 @@ BEGIN CATCH
 END CATCH;
 GO
 
-
+UPDATE ExternalArticle
+SET ReviewStatus = 'Reviewed'
+WHERE SourceArticleKey IS NOT NULL;
+GO
 /* ============================================================
    FINAL FULL-DATABASE VERIFICATION
    ============================================================ */

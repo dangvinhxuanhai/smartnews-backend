@@ -2,17 +2,18 @@ package com.example.smartnews.service.impl;
 
 import com.example.smartnews.dto.request.ExternalArticleSearchRequest;
 import com.example.smartnews.dto.request.ImportExternalArticleRequest;
+import com.example.smartnews.dto.request.ReviewExternalArticleRequest;
 import com.example.smartnews.dto.response.ExternalArticleDetailResponse;
 import com.example.smartnews.dto.response.ExternalArticleResponse;
-import com.example.smartnews.entity.ExternalArticle;
-import com.example.smartnews.entity.ExternalSource;
+import com.example.smartnews.entity.*;
+import com.example.smartnews.enums.ExternalArticleReviewStatus;
 import com.example.smartnews.exception.ResourceNotFoundException;
-import com.example.smartnews.repository.ExternalArticleRepository;
-import com.example.smartnews.repository.ExternalSourceRepository;
+import com.example.smartnews.repository.*;
 import com.example.smartnews.service.ExternalArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.smartnews.dto.request.ImportExternalArticleRequest;
@@ -43,6 +44,9 @@ public class ExternalArticleServiceImpl
 
     private final ExternalArticleRepository articleRepo;
 
+    private final CategoryRepository categoryRepo;
+
+    private final SystemAccountRepository accountRepo;
 
     @Override
     @Transactional(readOnly = true)
@@ -57,7 +61,8 @@ public class ExternalArticleServiceImpl
                         .and(hasCategory(request.getCategoryId()))
                         .and(hasOriginalCategory(request.getOriginalCategory()))
                         .and(publishedAfter(request.getFromDate()))
-                        .and(publishedBefore(request.getToDate()));
+                        .and(publishedBefore(request.getToDate()))
+                        .and(hasReviewStatus(request.getReviewStatus()));
 
         Pageable pageable = PageRequest.of(
                 request.getPage(),
@@ -96,6 +101,40 @@ public class ExternalArticleServiceImpl
         };
     }
 
+    @Override
+    @Transactional
+    public ExternalArticleDetailResponse review(
+            Integer id,
+            ReviewExternalArticleRequest request
+    ) {
+
+        ExternalArticle article = articleRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("External article not found"));
+
+        String currentEmail = SecurityContextHolder
+                                    .getContext()
+                                    .getAuthentication()
+                                    .getName();
+
+        SystemAccount reviewer = accountRepo.findByEmail(currentEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+
+
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepo.findById(request.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+            article.setCategory(category);
+        }
+
+
+        article.setReviewStatus(request.getReviewStatus());
+        article.setEditorNote(request.getEditorNote());
+        article.setReviewedBy(reviewer);
+        article.setReviewedAt(LocalDateTime.now());
+
+        return mapToDetailResponse(article);
+    }
+
 
     private ExternalArticleResponse mapToResponse(
             ExternalArticle article
@@ -120,6 +159,7 @@ public class ExternalArticleServiceImpl
                 .sourceId(article.getSource().getSourceId())
                 .sourceCode(article.getSource().getCode())
                 .sourceName(article.getSource().getName())
+                .reviewStatus(article.getReviewStatus())
                 .build();
     }
 
@@ -130,10 +170,16 @@ public class ExternalArticleServiceImpl
 
         Integer categoryId = null;
         String categoryName = null;
+        Integer reviewedById = null;
+        String reviewedByName = null;
 
         if (article.getCategory() != null) {
             categoryId = article.getCategory().getCategoryId();
             categoryName = article.getCategory().getCategoryName();
+        }
+        if (article.getReviewedBy() != null) {
+            reviewedById = article.getReviewedBy().getAccountId();
+            reviewedByName = article.getReviewedBy().getName();
         }
 
         return ExternalArticleDetailResponse.builder()
@@ -153,6 +199,11 @@ public class ExternalArticleServiceImpl
                 .sourceId(article.getSource().getSourceId())
                 .sourceCode(article.getSource().getCode())
                 .sourceName(article.getSource().getName())
+                .reviewStatus(article.getReviewStatus())
+                .reviewedById(reviewedById)
+                .reviewedByName(reviewedByName)
+                .reviewedAt(article.getReviewedAt())
+                .editorNote(article.getEditorNote())
                 .build();
     }
 
@@ -186,6 +237,7 @@ public class ExternalArticleServiceImpl
         article.setUrl(canonicalUrl);
         article.setContent(null);
         article.setImportedAt(LocalDateTime.now());
+        article.setReviewStatus(ExternalArticleReviewStatus.Pending);
 
         ExternalArticle saved = articleRepo.save(article);
 
