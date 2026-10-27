@@ -82,7 +82,6 @@ public class Story {
     )
     private Set<ExternalArticle> externalArticles = new HashSet<>();
 
-
     @ManyToMany
     @JoinTable(
             name = "StoryNewsArticle",
@@ -91,16 +90,13 @@ public class Story {
     )
     private Set<NewsArticle> newsArticles = new HashSet<>();
 
-
     @ManyToMany
     @JoinTable(
             name = "StoryTag",
             joinColumns = @JoinColumn(name = "StoryId"),
             inverseJoinColumns = @JoinColumn(name = "TagId")
     )
-    private Set<Tag> tags =
-            new HashSet<>();
-
+    private Set<Tag> tags = new HashSet<>();
 
     @PrePersist
     public void prePersist() {
