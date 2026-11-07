@@ -201,7 +201,9 @@ public class StoryServiceImpl
     @Transactional
     public StoryResponse removeExternalArticle(Integer storyId, Integer externalArticleId) {
         Story story = getStory(storyId);
-
+        if (story.getStatus() == StoryStatus.Published) {
+            throw new BadRequestException("Unpublish the story before removing external articles");
+        }
         boolean removed = story.getExternalArticles()
                 .removeIf(article -> article.getExternalArticleId().equals(externalArticleId));
 
@@ -272,6 +274,7 @@ public class StoryServiceImpl
                         .map(article ->
                                 StorySourceResponse.builder()
                                         .externalArticleId(article.getExternalArticleId())
+                                        .sourceId(article.getSource().getSourceId())
                                         .title(article.getTitle())
                                         .sourceName(article.getSource().getName())
                                         .url(article.getUrl())
@@ -321,6 +324,10 @@ public class StoryServiceImpl
                                 .toList())
                 .sources(sources)
                 .smartNewsArticles(internalArticles)
+                .tagIds(story.getTags()
+                        .stream()
+                        .map(Tag::getTagId)
+                        .toList())
                 .build();
     }
 }

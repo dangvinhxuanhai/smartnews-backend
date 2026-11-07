@@ -42,4 +42,6 @@ public class StoryResponse {
     private List<StorySourceResponse> sources;
 
     private List<StoryInternalArticleResponse> smartNewsArticles;
+
+    private List<Integer> tagIds;
 }

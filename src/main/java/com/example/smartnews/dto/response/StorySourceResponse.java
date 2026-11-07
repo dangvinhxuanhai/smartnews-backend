@@ -18,4 +18,6 @@ public class StorySourceResponse {
     private String url;
 
     private LocalDateTime publishedAt;
+
+    private Integer sourceId;
 }
