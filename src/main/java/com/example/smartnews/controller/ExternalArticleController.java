@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.example.smartnews.dto.request.ReviewExternalArticleRequest;
 
 @RestController
 @RequestMapping("/api/external-articles")
@@ -23,6 +24,14 @@ public class ExternalArticleController {
             @Valid @ModelAttribute ExternalArticleSearchRequest request
     ) {
         return ResponseEntity.ok(articleService.search(request));
+    }
+
+    @PatchMapping("/{id}/review")
+    public ResponseEntity<ExternalArticleDetailResponse> review(
+            @PathVariable Integer id,
+            @Valid @RequestBody ReviewExternalArticleRequest request
+    ) {
+        return ResponseEntity.ok(articleService.review(id, request));
     }
 
     @GetMapping("/{id}")
