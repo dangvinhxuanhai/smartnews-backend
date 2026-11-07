@@ -23,4 +23,6 @@ public class ArticleResponse {
     private String categoryName;
     private LocalDateTime createdDate;
     private List<String> tags;
+    private Integer categoryId;
+    private List<Integer> tagIds;
 }

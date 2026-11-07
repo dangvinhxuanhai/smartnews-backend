@@ -142,7 +142,11 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getAuthor().getName(),
                 article.getCategory().getCategoryName(),
                 article.getCreatedDate(),
-                tagNames
+                tagNames,
+                article.getCategory().getCategoryId(),
+                article.getTags().stream()
+                        .map(Tag::getTagId)
+                        .toList()
         );
     }
     @Override
