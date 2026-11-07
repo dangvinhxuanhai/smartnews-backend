@@ -21,7 +21,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
     @GetMapping
-    private List<CategoryResponse>  getAll(){
+    public List<CategoryResponse>  getAll(){
         return categoryService.getAll();
     }
     @GetMapping("/{id}")
